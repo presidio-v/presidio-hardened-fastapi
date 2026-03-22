@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "presidio-hardened-fastapi"
+version = "0.1.0"
+description = "A hardened, near drop-in replacement for FastAPI with strong security defaults."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "Presidio Security", email = "security@presidio.dev" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Security",
+]
+dependencies = [
+    "fastapi>=0.100.0",
+    "slowapi>=0.1.9",
+    "uvicorn[standard]>=0.20.0",
+    "secure>=0.3.0",
+    "importlib-metadata>=4.0; python_version < '3.10'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.24",
+    "ruff>=0.4",
+    "coverage>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/presidio-security/presidio-hardened-fastapi"
+Repository = "https://github.com/presidio-security/presidio-hardened-fastapi"
+Issues = "https://github.com/presidio-security/presidio-hardened-fastapi/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/presidio_fastapi"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "T20", "SIM"]
+ignore = ["S104", "S603", "S607"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
