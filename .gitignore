@@ -11,3 +11,7 @@ htmlcov/
 .pytest_cache/
 *.egg
 .ruff_cache/
+
+# Local IDE / tooling (never commit)
+.specify/
+.vscode/
