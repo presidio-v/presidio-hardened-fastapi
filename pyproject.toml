@@ -38,7 +38,7 @@ dev = [
     "httpx>=0.24",
     "ruff>=0.4",
     "coverage>=7.0",
-    "pytest-cov>=4.0",
+    "pytest-cov>=7.1.0",
 ]
 
 [project.urls]
