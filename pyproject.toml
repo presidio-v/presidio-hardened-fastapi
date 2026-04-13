@@ -24,7 +24,7 @@ classifiers = [
     "Topic :: Security",
 ]
 dependencies = [
-    "fastapi>=0.100.0",
+    "fastapi>=0.128.8",
     "slowapi>=0.1.9",
     "uvicorn[standard]>=0.20.0",
     "secure>=0.3.0",
