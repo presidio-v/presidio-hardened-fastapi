@@ -8,38 +8,18 @@
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a vulnerability in `presidio-hardened-fastapi`, please report it responsibly.
+Please report security vulnerabilities by opening a private GitHub Security Advisory
+(via the "Security" tab → "Report a vulnerability") rather than a public issue.
 
-### How to Report
+Include:
 
-1. **Do NOT open a public GitHub issue** for security vulnerabilities.
-2. Email: **security@presidio.dev** with:
-   - A description of the vulnerability
-   - Steps to reproduce
-   - The potential impact
-   - Any suggested fixes (optional)
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if any)
 
-### What to Expect
-
-- **Acknowledgement** within 48 hours of your report.
-- **Status update** within 7 days with our assessment and expected timeline.
-- **Resolution** — we aim to patch critical vulnerabilities within 14 days.
-- **Credit** — reporters will be credited in the release notes (unless anonymity is requested).
-
-### Scope
-
-The following are in scope:
-
-- The `presidio_fastapi` Python package and its middleware/wrappers
-- Bypass of CORS, rate limiting, OWASP validation, or redaction features
-- Information leakage through logging or error messages
-- Dependency chain vulnerabilities
-
-### Out of Scope
-
-- Vulnerabilities in upstream FastAPI, Starlette, or Pydantic (please report those to their respective maintainers)
-- Denial-of-service attacks against the rate limiter itself
-- Issues requiring physical access to the server
+You will receive an acknowledgement within 5 business days. We aim to release a patch
+within 30 days of a confirmed vulnerability.
 
 ## Security Features
 
@@ -62,3 +42,9 @@ When using this package:
 3. Use `redact_dict()` / `redact_value()` before logging or returning sensitive data
 4. Keep dependencies updated — run `pip audit` regularly
 5. Review the startup security logs for any warnings
+
+## Software Development Lifecycle
+
+This repository is developed under the Presidio hardened-family SDLC. The public report
+— scope, standards mapping, threat-model gates, and supply-chain controls — is at
+<https://github.com/presidio-v/presidio-hardened-docs/blob/main/sdlc/sdlc-report.md>.

@@ -5,11 +5,11 @@ Usage:
     python main.py --mode hardened  --port 8001
 """
 
+# ruff: noqa: T201, N806, B904, B008, S105
 from __future__ import annotations
 
 import argparse
 import datetime
-import os
 
 import uvicorn
 
@@ -38,8 +38,9 @@ def build_vulnerable_app():
     @app.get("/protected")
     def protected(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(token, SECRET, algorithms=[ALGORITHM, "none"],
-                                 options={"verify_exp": False})
+            payload = jwt.decode(
+                token, SECRET, algorithms=[ALGORITHM, "none"], options={"verify_exp": False}
+            )
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
         return {"user": payload.get("sub"), "role": payload.get("role", "user")}
@@ -47,8 +48,9 @@ def build_vulnerable_app():
     @app.get("/admin")
     def admin(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(token, SECRET, algorithms=[ALGORITHM, "none"],
-                                 options={"verify_exp": False})
+            payload = jwt.decode(
+                token, SECRET, algorithms=[ALGORITHM, "none"], options={"verify_exp": False}
+            )
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
         if payload.get("role") != "admin":
@@ -66,12 +68,12 @@ def build_hardened_app():
     from cryptography.hazmat.primitives.asymmetric import rsa
     from fastapi import Depends, HTTPException
     from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
-    from presidio_fastapi import FastAPI
-    from presidio_fastapi.rate_limit import limiter
     from slowapi import _rate_limit_exceeded_handler
     from slowapi.errors import RateLimitExceeded
     from slowapi.middleware import SlowAPIMiddleware
+
+    from presidio_fastapi import FastAPI
+    from presidio_fastapi.rate_limit import limiter
 
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     public_key = private_key.public_key()
@@ -86,20 +88,26 @@ def build_hardened_app():
 
     try:
         from argon2 import PasswordHasher
+
         _ph = PasswordHasher()
+
         def verify_password(plain: str, hashed: str) -> bool:
             try:
                 return _ph.verify(hashed, plain)
             except Exception:
                 return False
+
         _USERS = {
             "admin": _ph.hash("admin123"),
             "alice": _ph.hash("alice456"),
         }
     except ImportError:
-        import hmac, hashlib
+        import hashlib
+        import hmac
+
         def verify_password(plain: str, hashed: str) -> bool:
             return hmac.compare_digest(hashlib.sha256(plain.encode()).hexdigest(), hashed)
+
         _USERS = {
             "admin": hashlib.sha256(b"admin123").hexdigest(),
             "alice": hashlib.sha256(b"alice456").hexdigest(),
@@ -127,8 +135,9 @@ def build_hardened_app():
     @app.get("/protected")
     def protected(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(token, public_pem, algorithms=["RS256"],
-                                 options={"require": ["exp", "iss"]})
+            payload = jwt.decode(
+                token, public_pem, algorithms=["RS256"], options={"require": ["exp", "iss"]}
+            )
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
         return {"user": payload.get("sub"), "role": payload.get("role")}
@@ -136,8 +145,9 @@ def build_hardened_app():
     @app.get("/admin")
     def admin(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(token, public_pem, algorithms=["RS256"],
-                                 options={"require": ["exp", "iss"]})
+            payload = jwt.decode(
+                token, public_pem, algorithms=["RS256"], options={"require": ["exp", "iss"]}
+            )
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
         if payload.get("role") != "admin":
@@ -154,7 +164,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.mode == "vulnerable":
-        print(f"[Vulnerable mode] Starting on port {args.port} — HS256, secret='password', no expiry")
+        print(
+            f"[Vulnerable mode] Starting on port {args.port} — HS256, secret='password', no expiry"
+        )
         app = build_vulnerable_app()
     else:
         print(f"[Hardened mode] Starting on port {args.port} — RS256, Argon2id, rate limiting")
