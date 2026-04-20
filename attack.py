@@ -6,12 +6,12 @@ Usage:
     python attack.py --mode brute-force --target http://localhost:8000 --wordlist data/top1000.txt
 """
 
+# ruff: noqa: T201, N806, B904, B008, S105
 from __future__ import annotations
 
 import argparse
 import base64
 import json
-import sys
 
 import requests
 

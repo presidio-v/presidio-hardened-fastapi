@@ -5,11 +5,11 @@ Usage:
     python main.py --mode hardened  --port 8001
 """
 
+# ruff: noqa: T201, N806, B904, B008, S105
 from __future__ import annotations
 
 import argparse
 import datetime
-import os
 
 import uvicorn
 
@@ -68,12 +68,12 @@ def build_hardened_app():
     from cryptography.hazmat.primitives.asymmetric import rsa
     from fastapi import Depends, HTTPException
     from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
-    from presidio_fastapi import FastAPI
-    from presidio_fastapi.rate_limit import limiter
     from slowapi import _rate_limit_exceeded_handler
     from slowapi.errors import RateLimitExceeded
     from slowapi.middleware import SlowAPIMiddleware
+
+    from presidio_fastapi import FastAPI
+    from presidio_fastapi.rate_limit import limiter
 
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     public_key = private_key.public_key()
@@ -102,7 +102,8 @@ def build_hardened_app():
             "alice": _ph.hash("alice456"),
         }
     except ImportError:
-        import hmac, hashlib
+        import hashlib
+        import hmac
 
         def verify_password(plain: str, hashed: str) -> bool:
             return hmac.compare_digest(hashlib.sha256(plain.encode()).hexdigest(), hashed)
