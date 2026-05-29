@@ -10,16 +10,15 @@ from __future__ import annotations
 
 import argparse
 import datetime
-
 import uvicorn
+import fastapi
+import jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 
 def build_vulnerable_app():
     """Minimal FastAPI app with HS256 JWT, no expiry check, no rate limiting."""
-    import fastapi
-    import jwt
-    from fastapi import Depends, HTTPException
-    from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
     SECRET = "password"
     ALGORITHM = "HS256"
@@ -38,24 +37,44 @@ def build_vulnerable_app():
     @app.get("/protected")
     def protected(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(
-                token, SECRET, algorithms=[ALGORITHM, "none"], options={"verify_exp": False}
-            )
+            # Check what algorithm the incoming attack token is using
+            headers = jwt.get_unverified_header(token)
+            incoming_alg = headers.get("alg", "").lower()
+
+            if incoming_alg == "none":
+                # Explicitly drop signature verification constraints for the exploit simulation
+                payload = jwt.decode(token, options={"verify_signature": False})
+            else:
+                payload = jwt.decode(token, SECRET, algorithms=[ALGORITHM])
+
+            return {"user": payload.get("sub")}
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
-        return {"user": payload.get("sub"), "role": payload.get("role", "user")}
 
     @app.get("/admin")
     def admin(token: str = Depends(oauth2_scheme)):
         try:
-            payload = jwt.decode(
-                token, SECRET, algorithms=[ALGORITHM, "none"], options={"verify_exp": False}
-            )
+            # Check what algorithm the incoming attack token is using
+            headers = jwt.get_unverified_header(token)
+            incoming_alg = headers.get("alg", "").lower()
+
+            if incoming_alg == "none":
+                # Drop signature and expiration checks for the exploit simulation
+                payload = jwt.decode(
+                    token, options={"verify_signature": False, "verify_exp": False}
+                )
+            else:
+                payload = jwt.decode(
+                    token, SECRET, algorithms=[ALGORITHM], options={"verify_exp": False}
+                )
+
+            # Keep your existing role check intact
+            if payload.get("role") != "admin":
+                raise HTTPException(status_code=403, detail="Not admin")
+
+            return {"message": "Welcome, admin"}
         except jwt.InvalidTokenError as e:
             raise HTTPException(status_code=401, detail=str(e))
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="Not admin")
-        return {"message": "Welcome, admin"}
 
     return app
 
