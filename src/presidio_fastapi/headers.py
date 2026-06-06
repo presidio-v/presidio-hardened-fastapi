@@ -9,7 +9,6 @@ from starlette.responses import Response
 DEFAULT_SECURITY_HEADERS: dict[str, str] = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "geolocation=(), camera=(), microphone=()",
     "Content-Security-Policy": "default-src 'self'; frame-ancestors 'none'",
