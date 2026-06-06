@@ -31,10 +31,15 @@ from presidio_fastapi.dep_check import log_dependency_report
 from presidio_fastapi.headers import SecurityHeadersMiddleware
 from presidio_fastapi.rate_limit import limiter, rate_limit_exceeded_handler
 from presidio_fastapi.redaction import redact_dict, redact_value  # noqa: F401
-from presidio_fastapi.security_logging import log_security_event, setup_logging
+from presidio_fastapi.security_logging import (
+    RedactingFilter,
+    install_log_redaction,
+    log_security_event,
+    setup_logging,
+)
 from presidio_fastapi.validation import check_owasp  # noqa: F401
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = [
     "FastAPI",
     "APIRouter",
@@ -43,6 +48,8 @@ __all__ = [
     "redact_dict",
     "redact_value",
     "check_owasp",
+    "RedactingFilter",
+    "install_log_redaction",
     "__version__",
 ]
 

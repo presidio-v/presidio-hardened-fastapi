@@ -2,7 +2,7 @@
 
 A hardened, near drop-in replacement for FastAPI with strong security defaults.
 
-> **Version 0.1.0** — MIT License
+> **Version 0.2.0** — MIT License (v0.2 adds sink redaction, pip-audit in CI/dev, doc alignment)
 
 ## Quick Start
 
@@ -21,6 +21,12 @@ async def root():
     return {"status": "hardened"}
 ```
 
+## v0.2.0 Changes
+- Sink-level secret redaction via RedactingFilter (automatic for the logger).
+- pip-audit integrated in dev extras and CI.
+- Docs updated for accuracy (redaction/validation are strong helpers; use them explicitly on input).
+- Version and dependency improvements.
+
 ## What You Get (Automatically)
 
 | Security Feature | Plain FastAPI | presidio-hardened-fastapi |
@@ -28,10 +34,10 @@ async def root():
 | **CORS** | Wide open by default | Locked down — no origins allowed unless configured |
 | **Rate Limiting** | None | 60 req/min per IP with exponential backoff (configurable) |
 | **Security Headers** | None | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, etc. |
-| **Secret Redaction** | None | Auto-scans for API keys, tokens, JWTs in request data |
-| **OWASP Validation** | Pydantic only | SQL injection, XSS, path traversal checks on top of Pydantic |
-| **Dependency Check** | None | On-startup CVE/version check for FastAPI and common deps |
-| **Security Logging** | None | Structured security event logs for every hardened route |
+| **Secret Redaction** | None | Helpers + automatic sink-level RedactingFilter on presidio_fastapi logs (v0.2) |
+| **OWASP Validation** | Pydantic only | SQL injection, XSS, path traversal checks (opt-in helper: call check_owasp()) |
+| **Dependency Check** | None | On-startup + pip-audit in [dev]/CI (v0.2) |
+| **Security Logging** | None | Structured security event logs (with sink redaction) |
 
 ## Side-by-Side Comparison
 
@@ -80,12 +86,15 @@ async def login(request: Request):
     return redact_dict(response_data)  # token is redacted in response
 ```
 
-**Automatic protections applied with zero extra code:**
+**Automatic protections applied with zero extra code (v0.2):**
 - Strict CORS (only `https://myapp.com`)
 - Rate limiting (60 req/min per IP)
 - Security headers (CSP, HSTS, X-Frame-Options, ...)
-- Startup dependency audit
+- Sink redaction on all presidio_fastapi logs
+- Startup dependency audit (plus pip-audit available)
 - Security event logging
+
+Note: `check_owasp()` and `redact_*` are powerful helpers — call them on untrusted input/response data for full effect (validation/redaction of bodies is not fully automatic to avoid breaking existing Pydantic models).
 
 ## Configuration
 
