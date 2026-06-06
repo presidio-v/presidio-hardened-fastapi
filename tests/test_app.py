@@ -9,7 +9,7 @@ from presidio_fastapi import FastAPI, HardenedFastAPI, __version__
 
 
 def test_version() -> None:
-    assert __version__ == "0.1.0"
+    assert __version__ == "0.2.0"
 
 
 def test_hardened_is_fastapi_subclass() -> None:

@@ -15,7 +15,7 @@ async def test_default_security_headers(client: AsyncClient) -> None:
 
     assert resp.headers["x-content-type-options"] == "nosniff"
     assert resp.headers["x-frame-options"] == "DENY"
-    assert resp.headers["x-xss-protection"] == "1; mode=block"
+    assert "x-xss-protection" not in resp.headers  # deprecated in modern browsers
     assert resp.headers["referrer-policy"] == "strict-origin-when-cross-origin"
     assert "max-age=" in resp.headers["strict-transport-security"]
     assert "default-src" in resp.headers["content-security-policy"]
