@@ -153,7 +153,7 @@ except HTTPException as e:
 ## Development
 
 ```bash
-git clone https://github.com/presidio-security/presidio-hardened-fastapi
+git clone https://github.com/presidio-v/presidio-hardened-fastapi
 cd presidio-hardened-fastapi
 uv venv .venv && source .venv/bin/activate
 uv pip install -e ".[dev]"

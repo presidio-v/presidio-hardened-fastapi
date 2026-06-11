@@ -10,7 +10,7 @@ updates:
       - dependencies
       - security
     reviewers:
-      - presidio-security/maintainers
+      - presidio-v/maintainers
 
   - package-ecosystem: github-actions
     directory: "/"
