@@ -105,12 +105,30 @@ def build_hardened_app():
         import hashlib
         import hmac
 
+        _PBKDF2_ITERATIONS = 600_000
+
+        def _pbkdf2_record(plain: str, salt: bytes) -> str:
+            digest = hashlib.pbkdf2_hmac("sha256", plain.encode(), salt, _PBKDF2_ITERATIONS).hex()
+            return f"pbkdf2_sha256${_PBKDF2_ITERATIONS}${salt.hex()}${digest}"
+
         def verify_password(plain: str, hashed: str) -> bool:
-            return hmac.compare_digest(hashlib.sha256(plain.encode()).hexdigest(), hashed)
+            try:
+                algorithm, iterations_text, salt_hex, digest = hashed.split("$", 3)
+                if algorithm != "pbkdf2_sha256":
+                    return False
+                candidate = hashlib.pbkdf2_hmac(
+                    "sha256",
+                    plain.encode(),
+                    bytes.fromhex(salt_hex),
+                    int(iterations_text),
+                ).hex()
+            except (TypeError, ValueError):
+                return False
+            return hmac.compare_digest(candidate, digest)
 
         _USERS = {
-            "admin": hashlib.sha256(b"admin123").hexdigest(),
-            "alice": hashlib.sha256(b"alice456").hexdigest(),
+            "admin": _pbkdf2_record("admin123", b"presidio-demo-admin"),
+            "alice": _pbkdf2_record("alice456", b"presidio-demo-alice"),
         }
 
     app = FastAPI(title="Hardened Demo (Exp 2)")

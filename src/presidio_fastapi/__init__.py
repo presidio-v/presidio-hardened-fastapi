@@ -53,8 +53,6 @@ __all__ = [
     "__version__",
 ]
 
-_logger = logging.getLogger("presidio_fastapi")
-
 
 def _build_lifespan(
     enable_dep_check: bool,
