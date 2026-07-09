@@ -100,7 +100,7 @@ def attack_brute_force(target: str, wordlist_path: str) -> None:
             print(f"[brute-force] RATE LIMITED after {i} attempts — hardened mode working.")
             return
         if resp.status_code == 200:
-            print(f"[brute-force] SUCCESS — found password '{pwd}' on attempt {i}")
+            print(f"[brute-force] SUCCESS — found matching password on attempt {i}")
             return
         if i % 10 == 0:
             print(f"[brute-force] {i} attempts, still trying...")
