@@ -16,6 +16,7 @@ from presidio_fastapi import FastAPI, APIRouter
 
 app = FastAPI(title="My Secure API")
 
+
 @app.get("/")
 async def root():
     return {"status": "hardened"}
@@ -62,6 +63,7 @@ app.add_middleware(
 # No input validation beyond Pydantic
 # No secret redaction
 
+
 @app.post("/login")
 async def login(data: dict):
     return {"token": "sk-live-abc123secret"}  # leaked!
@@ -76,6 +78,7 @@ app = FastAPI(
     title="My Secure API",
     cors_allow_origins=["https://myapp.com"],  # explicit allowlist
 )
+
 
 @app.post("/login")
 async def login(request: Request):
@@ -122,6 +125,7 @@ from presidio_fastapi import FastAPI, Request
 from presidio_fastapi import limiter
 
 app = FastAPI()
+
 
 @app.get("/expensive")
 @limiter.limit("5/minute")
