@@ -21,3 +21,9 @@ updates:
     labels:
       - dependencies
       - ci
+    # The CodeQL init/autobuild/analyze steps are separate dependencies to
+    # Dependabot but must run at a matching version, so update them together.
+    groups:
+      codeql-action:
+        patterns:
+          - "github/codeql-action*"
